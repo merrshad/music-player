@@ -11,8 +11,8 @@ def create_app():
 
     @app.route('/music')
     def index():
-        music_files = [f for f in os.listdir(app.config['MUSIC_FOLDER']) if f.endswith(('.mp3', '.wav', '.ogg'))]
-        return render_template('index.html', filenames=music_files)
+        music_files = [f for f in os.listdir(app.config['MUSIC_FOLDER']) if f.endswith((".mp3", ".wav", ".ogg"))]
+        return render_template("player.html", filenames=music_files)
 
 
     @app.route('/music/<filename>')
@@ -20,8 +20,8 @@ def create_app():
         return send_file(os.path.join(app.config['MUSIC_FOLDER'], filename))
 
     @app.route('/home')
-    def home():
-        return render_template('home.html')    
+    def home_route():
+        return render_template("index.html")
 
     @app.route('/about')
     def about():
@@ -34,11 +34,12 @@ def create_app():
     @app.route('/team')
     def team():
         return render_template('team.html')
-    
+
     @app.route('/')
     def default_route():
-        return render_template('home.html')
+        return render_template("index.html")
 
     return app
-    
+
+
 app = create_app()

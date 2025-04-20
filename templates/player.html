@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پخش کننده موسیقی</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Include Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Link the player CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/player.css') }}">
+    <style>
+        /* Basic layout styles */
+        body {
+            font-family: "Vazirmatn", sans-serif;
+            background-color: #121212; /* Very dark gray, almost black */
+            background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 0L6 5L1 6L0 1L5 0Z' fill='%2331293A'/%3E%3C/svg%3E"); /* Pixelated texture */
+            color: #e0e0e0;
+            margin: 0;
+            padding-top: 80px; /* Increased padding for navbar + top margin */
+            background-size: cover; /* Ensure the background image covers the entire area */
+        }
+
+        nav {
+            background-color: #1e1e1e;
+            padding: 10px 0;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: #e0e0e0;
+            text-decoration: none;
+        }
+
+
+        /* Container to control player width and centering */
+         .container {
+             max-width: 700px; /* Set max width for the player */
+             width: 90%; /* Use percentage for responsiveness */
+             margin: 20px auto; /* Center the container */
+         }
+
+
+    </style>
+</head>
+<body dir="rtl">
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('about') }}">درباره ما</a></li>
+            <li><a href="{{ url_for('team') }}">تیم</a></li>
+            <li><a href="{{ url_for('contact') }}">تماس</a></li>
+            <li><a href="{{ url_for('default_route') }}">خانه</a></li>
+        </ul>
+        <div id="current-time"></div>
+    </nav>
+
+    <div class="container">
+        <!-- Music Player Structure with outer div for border effect -->
+        <div class="c-player"> 
+            <!-- Inner wrapper for content -->
+            <div class="player-content-wrapper">
+                <div class="c-player__current-song">
+                    <div class="c-player__cd">
+                        <div class="c-player__cd-thumb" style="background-image: url('{{ url_for('static', filename='covers/default.jpg') }}')"></div>
+                    </div>
+                    <div class="c-player__playing-now">
+                        <p>در حال پخش</p>
+                        <h2 id="current-title">عنوان آهنگ</h2>
+                        <p id="current-artist" class="c-player__song-author">نام خواننده</p>
+                    </div>
+                    <div class="c-player__controls">
+                        <div class="c-player__button btn-repeat">
+                            <i class="fas fa-redo"></i>
+                        </div>
+                        <div class="c-player__button btn-prev">
+                            <i class="fas fa-step-backward"></i>
+                        </div>
+                        <div class="c-player__button btn-toggle-play">
+                            <i class="fas fa-pause icon-pause"></i>
+                            <i class="fas fa-play icon-play"></i>
+                        </div>
+                        <div class="c-player__button btn-next">
+                            <i class="fas fa-step-forward"></i>
+                        </div>
+                        <div class="c-player__button btn-random">
+                            <i class="fas fa-random"></i>
+                        </div>
+                    </div>
+                    <div class="c-player__progress">
+                        <div class="c-player__progress-start-time">0:00</div>
+                        <input id="progress-bar" class="c-player__progress-bar"
+                               type="range"
+                               value="0"
+                               step="1" 
+                               min="0"
+                               max="100" />
+                        <div id="js-duration-song" class="c-player__progress-end-time">0:00</div>
+                    </div>
+                    <audio id="js-player-audio" class="c-player__audio" src="#" preload="metadata"></audio>
+                </div>
+
+                <div class="c-player__playlist">
+                    {% if filenames %}
+                        {% for filename in filenames %}
+                            {% set title = filename.replace('.mp3', '') %}
+                            {% set cover_filename = filename.replace('.mp3', '.jpg') %}
+                            {% set cover_path = url_for('static', filename='covers/' + cover_filename) %}
+                            <div class="c-player__song" 
+                                 data-src="{{ url_for('static', filename='music/' + filename) }}" 
+                                 data-title="{{ title }}" 
+                                 data-artist="نام هنرمند" 
+                                 data-image="{{ url_for('static', filename='covers/' + cover_filename) if cover_filename else url_for('static', filename='covers/default.jpg') }}"
+                                 data-index="{{ loop.index0 }}">
+                                <div class="c-player__song-number">{{ loop.index }}</div>
+                                <div class="c-player__song-infos">
+                                    <h3 class="c-player__song-title">{{ title }}</h3>
+                                    <p class="c-player__song-author">نام هنرمند</p>
+                                </div>
+                                <div class="c-player__song-duration">0:00</div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                         <p style="text-align: center; padding: 20px;">هیچ آهنگی یافت نشد.</p>
+                    {% endif %}
+                </div>
+                <!-- Optional: Band Infos -->
+                <!-- <div class="c-player__band-infos"> ... </div> -->
+            </div> <!-- End player-content-wrapper -->
+        </div> <!-- End c-player -->
+    </div> <!-- End container -->
+
+    <!-- Link the player JavaScript -->
+    <script src="{{ url_for('static', filename='js/player.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jalaali-js@1.2.0/dist/jalaali.js"></script>
+    <script>
+         function changeBackground() {
+             const backgrounds = [
+                 "{{ url_for('static', filename='background/1.png') }}",
+                 "{{ url_for('static', filename='background/2.jpg') }}",
+                 "{{ url_for('static', filename='background/3.png') }}",
+                 "{{ url_for('static', filename='background/4.jpg') }}"
+             ];
+
+             const randomIndex = Math.floor(Math.random() * backgrounds.length);
+             document.body.style.backgroundImage = `url('${backgrounds[randomIndex]}')`;
+         }
+
+         function updateTime() {
+             const now = new Date();
+             const jalaliDate = toJalaali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+             const formattedDate = `${jalaliDate.jy}/${jalaliDate.jm}/${jalaliDate.jd}`;
+
+             let hours = now.getHours();
+             let minutes = now.getMinutes();
+             let seconds = now.getSeconds();
+
+             // Add leading zeros if needed
+             hours = hours < 10 ? '0' + hours : hours;
+             minutes = minutes < 10 ? '0' + minutes : minutes;
+             seconds = seconds < 10 ? '0' + seconds : seconds;
+
+             const formattedTime = `${hours}:${minutes}:${seconds}`;
+
+             document.getElementById('current-time').textContent = `${formattedDate} | ${formattedTime}`;
+         }
+
+         window.onload = function() {
+            changeBackground();
+            updateTime();
+            setInterval(updateTime, 1000); // Update time every second
+        };
+     </script>
+
+</body>
+</html>
