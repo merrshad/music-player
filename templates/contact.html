@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تماس با ما</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&display=swap');
+        body {
+            background-color: #121212; 
+            color: #e0e0e0; 
+            font-family: 'Vazirmatn', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        #stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0.7;
+            animation: twinkle 2s infinite;
+        }
+        .container {
+            background-color: #1e1e1e; 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
+            padding: 20px; 
+            width: 400px; 
+            text-align: center;
+        }
+        h1 {
+            color: #BB86FC;
+        }
+        label {
+            color: #BB86FC; 
+            margin-top: 10px;
+            display: block;
+        }
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            background-color: #333; 
+            color: #e0e0e0; 
+            border: none; 
+            padding: 5px; 
+            margin-bottom: 10px; 
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #BB86FC; 
+            color: #121212; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin-top: 10px;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 0.2; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>تماس با ما</h1>
+        <p>برای ارتباط با ما می‌توانید از طریق ایمیل زیر اقدام نمایید: example@email.com</p>
+        <p>همچنین می‌توانید از طریق فرم زیر پیام خود را ارسال کنید:</p>
+        <form action="/submit_contact" method="post">
+            <label for="name">نام:</label>
+            <input type="text" id="name" name="name">
+            <label for="email">ایمیل:</label>
+            <input type="email" id="email" name="email">
+            <label for="message">پیام:</label>
+            <textarea id="message" name="message"></textarea>
+            <input type="submit" value="ارسال">
+        </form>
+    </div>
+    <div id="stars"></div>
+    <script>
+        const starsContainer = document.getElementById('stars');
+        const numStars = 100;
+
+        for (let i = 0; i < numStars; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.width = Math.random() * 2 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            starsContainer.appendChild(star);
+        }
+    </script>
+</body>
+</html>
